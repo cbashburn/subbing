@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructor Sub Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: #1e1e1e;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 14px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: #a0a0a0;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab.active {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #ff4757;
+            margin-left: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #3a3a3a;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #2a2a2a;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .clear-btn {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .clear-btn:hover {
+            opacity: 0.8;
+        }
+
+        .submit-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .message.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #a0a0a0;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            background: #1e3a5f;
+            border-left: 4px solid #3b82f6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .info-box p {
+            color: #a0c4e8;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        .info-box strong {
+            color: #ffffff;
+        }
+
+        .no-requests {
+            background: #3a3a3a;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Instructor Sub Portal</h1>
+        <p class="subtitle">Request a sub or apply for available opportunities</p>
+
+        <div class="tab-container">
+            <button class="tab active" onclick="switchTab('request')">Request a Sub</button>
+            <button class="tab" onclick="switchTab('apply')">Apply for Subs</button>
+        </div>
+
+        <!-- REQUEST A SUB FORM -->
+        <div id="request-section" class="form-section active">
+            <form id="subRequestForm">
+                <div class="form-group">
+                    <label for="requestInstructorName">
+                        Your Name
+                        <span class="required">*</span>
+                    </label>
+                    <select id="requestInstructorName" name="instructorName" required>
+                        <option value="">Loading instructors...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="classDate">
+                        Class Date
+                        <span class="required">*</span>
+                    </label>
+                    <input type="date" id="classDate" name="classDate" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="classTime">
+                        Class Time
+                        <span class="required">*</span>
+                    </label>
+                    <input type="text" id="classTime" name="classTime" placeholder="e.g., 6:00 AM, 5:30 PM" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="requestComments">Comments</label>
+                    <textarea id="requestComments" name="comments" placeholder="Any additional information..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="clear-btn" onclick="clearRequestForm()">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        Clear form
+                    </button>
+                    <button type="submit" class="submit-btn" id="requestSubmitBtn">Submit Request</button>
+                </div>
+            </form>
+
+            <div class="loading" id="requestLoading">Submitting...</div>
+            <div class="message" id="requestMessage"></div>
+        </div>
+
+        <!-- APPLY FOR SUBS FORM -->
+        <div id="apply-section" class="form-section">
+            <form id="subApplicationForm">
+                <div class="form-group">
+                    <label for="applicantName">
+                        Your Name
+                        <span class="required">*</span>
+                    </label>
+                    <select id="applicantName" name="applicantName" required>
+                        <option value="">Loading instructors...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subRequest">
+                        Substitution Request
+                        <span class="required">*</span>
+                    </label>
+                    <select id="subRequest" name="subRequest" required>
+                        <option value="">Loading available requests...</option>
+                    </select>
+                </div>
+
+                <div id="requestDetails" class="info-box" style="display: none;">
+                    <p><strong>Class Details:</strong></p>
+                    <p id="detailsText"></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="applyComments">Comments</label>
+                    <textarea id="applyComments" name="comments" placeholder="Why you're a good fit for this class..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="clear-btn" onclick="clearApplicationForm()">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        Clear form
+                    </button>
+                    <button type="submit" class="submit-btn" id="applySubmitBtn">Submit Application</button>
+                </div>
+            </form>
+
+            <div class="loading" id="applyLoading">Submitting...</div>
+            <div class="message" id="applyMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - Replace with your actual values
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEMaO5LcGQY1I7xvhjS0EAP4nLQP-zRubaHDt4HP7S0wfaUH0kFRD6gTmkCYs4lhd9/exec';
+        const SPREADSHEET_ID = '1BN2CLKMrtMA-2jlOZ7063hcJtwXk5Se451OoRCeXzr0';
+
+        let subRequests = [];
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            await loadInstructors();
+            await loadSubRequests();
+        });
+
+        // Tab switching
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('.tab');
+            const sections = document.querySelectorAll('.form-section');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            sections.forEach(s => s.classList.remove('active'));
+            
+            if (tab === 'request') {
+                tabs[0].classList.add('active');
+                document.getElementById('request-section').classList.add('active');
+            } else {
+                tabs[1].classList.add('active');
+                document.getElementById('apply-section').classList.add('active');
+            }
+        }
+
+        // Load instructors for both forms
+        async function loadInstructors() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getInstructors`);
+                const instructors = await response.json();
+                
+                // Populate request form
+                const requestSelect = document.getElementById('requestInstructorName');
+                requestSelect.innerHTML = '<option value="">Select your name</option>';
+                
+                // Populate application form
+                const applySelect = document.getElementById('applicantName');
+                applySelect.innerHTML = '<option value="">Select your name</option>';
+                
+                instructors.forEach(instructor => {
+                    // Request form option
+                    const requestOption = document.createElement('option');
+                    requestOption.value = instructor.fullname;
+                    requestOption.textContent = instructor.displayname;
+                    requestOption.dataset.email = instructor.email;
+                    requestSelect.appendChild(requestOption);
+                    
+                    // Application form option
+                    const applyOption = document.createElement('option');
+                    applyOption.value = instructor.fullname;
+                    applyOption.textContent = instructor.displayname;
+                    applyOption.dataset.email = instructor.email;
+                    applySelect.appendChild(applyOption);
+                });
+            } catch (error) {
+                console.error('Error loading instructors:', error);
+            }
+        }
+
+        // Load sub requests for application form
+        async function loadSubRequests() {
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getPendingSubRequests`);
+                const requests = await response.json();
+                
+                subRequests = requests;
+                
+                const select = document.getElementById('subRequest');
+                
+                if (requests.length === 0) {
+                    select.innerHTML = '<option value="">No open requests available</option>';
+                    select.disabled = true;
+                    return;
+                }
+                
+                select.innerHTML = '<option value="">Select a sub request</option>';
+                
+                requests.forEach((request, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = `${request.classDate} at ${request.classTime} - ${request.instructorName}`;
+                    option.dataset.requestId = request.rowNumber;
+                    select.appendChild(option);
+                });
+                
+                select.addEventListener('change', showRequestDetails);
+            } catch (error) {
+                console.error('Error loading sub requests:', error);
+            }
+        }
+
+        function showRequestDetails() {
+            const select = document.getElementById('subRequest');
+            const selectedIndex = select.value;
+            const detailsBox = document.getElementById('requestDetails');
+            const detailsText = document.getElementById('detailsText');
+            
+            if (selectedIndex === '') {
+                detailsBox.style.display = 'none';
+                return;
+            }
+            
+            const request = subRequests[selectedIndex];
+            
+            detailsText.innerHTML = `
+                <strong>Instructor:</strong> ${request.instructorName}<br>
+                <strong>Date:</strong> ${request.classDate}<br>
+                <strong>Time:</strong> ${request.classTime}<br>
+                <strong>Comments:</strong> ${request.comments || 'None'}
+            `;
+            
+            detailsBox.style.display = 'block';
+        }
+
+        // Submit sub request
+        document.getElementById('subRequestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('requestSubmitBtn');
+            const loading = document.getElementById('requestLoading');
+            const message = document.getElementById('requestMessage');
+            
+            const select = document.getElementById('requestInstructorName');
+            const selectedOption = select.options[select.selectedIndex];
+            
+            const formData = {
+                action: 'submitSubRequest',
+                instructorName: select.value,
+                instructorEmail: selectedOption.dataset.email,
+                classDate: document.getElementById('classDate').value,
+                classTime: document.getElementById('classTime').value,
+                comments: document.getElementById('requestComments').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    message.className = 'message success';
+                    message.textContent = 'Sub request submitted successfully! Other instructors will be notified.';
+                    message.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        clearRequestForm();
+                        message.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(result.error || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                message.className = 'message error';
+                message.textContent = 'Error submitting request. Please try again.';
+                message.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        // Submit application
+        document.getElementById('subApplicationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('applySubmitBtn');
+            const loading = document.getElementById('applyLoading');
+            const message = document.getElementById('applyMessage');
+            
+            const applicantSelect = document.getElementById('applicantName');
+            const selectedApplicant = applicantSelect.options[applicantSelect.selectedIndex];
+            
+            const requestSelect = document.getElementById('subRequest');
+            const selectedIndex = requestSelect.value;
+            
+            if (selectedIndex === '') {
+                message.className = 'message error';
+                message.textContent = 'Please select a sub request to apply for.';
+                message.style.display = 'block';
+                return;
+            }
+            
+            const selectedRequest = subRequests[selectedIndex];
+            
+            const formData = {
+                action: 'submitSubApplication',
+                applicantName: applicantSelect.value,
+                applicantEmail: selectedApplicant.dataset.email,
+                requestRowNumber: selectedRequest.rowNumber,
+                requestDetails: {
+                    instructor: selectedRequest.instructorName,
+                    date: selectedRequest.classDate,
+                    time: selectedRequest.classTime,
+                    comments: selectedRequest.comments
+                },
+                comments: document.getElementById('applyComments').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            submitBtn.disabled = true;
+            loading.style.display = 'block';
+            message.style.display = 'none';
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    message.className = 'message success';
+                    message.textContent = 'Application submitted successfully! The manager will review your application.';
+                    message.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        clearApplicationForm();
+                        loadSubRequests();
+                        message.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(result.error || 'Submission failed');
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                message.className = 'message error';
+                message.textContent = 'Error submitting application. Please try again.';
+                message.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        function clearRequestForm() {
+            document.getElementById('subRequestForm').reset();
+        }
+
+        function clearApplicationForm() {
+            document.getElementById('subApplicationForm').reset();
+            document.getElementById('requestDetails').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

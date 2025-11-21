@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sub Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-card h3 {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .filters {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        select, input {
+            background: #3a3a3a;
+            border: 1px solid #4a4a4a;
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+
+        .requests-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .request-card {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .request-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .request-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .badge {
+            background: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge.pending {
+            background: #f59e0b;
+        }
+
+        .badge.filled {
+            background: #10b981;
+        }
+
+        .request-details {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .request-details p {
+            color: #a0a0a0;
+            margin: 5px 0;
+        }
+
+        .request-details strong {
+            color: #ffffff;
+        }
+
+        .applications-section {
+            margin-top: 20px;
+        }
+
+        .applications-section h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .application-card {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 18px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .application-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .application-card.selected {
+            border-color: #10b981;
+            background: #1e3a2e;
+        }
+
+        .applicant-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .applicant-email {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            margin-bottom: 10px;
+        }
+
+        .application-comments {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            font-style: italic;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #3a3a3a;
+        }
+
+        .application-time {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 8px;
+        }
+
+        .no-applications {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            color: #a0a0a0;
+        }
+
+        .assign-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .selected-info {
+            color: #10b981;
+            font-weight: 500;
+        }
+
+        .assign-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .assign-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        .assign-btn:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .manual-assign {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 8px;
+        }
+
+        .manual-assign label {
+            display: block;
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .manual-assign-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .manual-assign-controls select {
+            flex: 1;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #a0a0a0;
+        }
+
+        .spinner {
+            border: 3px solid #3a3a3a;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .message.error {
+            background: #ef4444;
+            color: white;
+        }
+
+        .empty-state {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .empty-state h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #a0a0a0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 Sub Management Dashboard</h1>
+            <p class="subtitle">Review requests and applications • Assign substitutes</p>
+        </header>
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Pending Requests</h3>
+                <div class="number" id="pendingCount">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Applications</h3>
+                <div class="number" id="applicationsCount">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Filled Today</h3>
+                <div class="number" id="filledTodayCount">-</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Sort by:</label>
+                <select id="sortBy">
+                    <option value="date">Date (Earliest First)</option>
+                    <option value="date-desc">Date (Latest First)</option>
+                    <option value="applications">Most Applications</option>
+                    <option value="recent">Most Recent Request</option>
+                </select>
+            </div>
+            <button class="refresh-btn" onclick="loadData()">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                    <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                </svg>
+                Refresh
+            </button>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div id="loadingState" class="loading">
+            <div class="spinner"></div>
+            <p>Loading requests and applications...</p>
+        </div>
+
+        <div id="requestsContainer" class="requests-container" style="display: none;"></div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <h2>🎉 All Caught Up!</h2>
+            <p>No pending sub requests at the moment.</p>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxEMaO5LcGQY1I7xvhjS0EAP4nLQP-zRubaHDt4HP7S0wfaUH0kFRD6gTmkCYs4lhd9/exec';
+        
+        let requestsData = [];
+        let applicationsData = [];
+        let allInstructors = [];
+        let selectedApplications = {}; // Track selected application per request
+
+        // Load data on page load
+        window.addEventListener('DOMContentLoaded', loadData);
+
+        async function loadData() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('requestsContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+
+            try {
+                // Load all data in parallel
+                const [requests, applications, instructors] = await Promise.all([
+                    fetch(`${SCRIPT_URL}?action=getPendingSubRequests`).then(r => r.json()),
+                    fetch(`${SCRIPT_URL}?action=getAllSubApplications`).then(r => r.json()),
+                    fetch(`${SCRIPT_URL}?action=getInstructors`).then(r => r.json())
+                ]);
+
+                requestsData = requests;
+                applicationsData = applications;
+                allInstructors = instructors;
+
+                updateStats();
+                renderRequests();
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showMessage('Error loading data. Please refresh the page.', 'error');
+            } finally {
+                document.getElementById('loadingState').style.display = 'none';
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('pendingCount').textContent = requestsData.length;
+            document.getElementById('applicationsCount').textContent = applicationsData.length;
+            
+            // Count filled today (this would need to be added to the backend)
+            document.getElementById('filledTodayCount').textContent = '0';
+        }
+
+        function renderRequests() {
+            const container = document.getElementById('requestsContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (requestsData.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            // Sort requests
+            const sortBy = document.getElementById('sortBy').value;
+            const sorted = sortRequests([...requestsData], sortBy);
+
+            container.innerHTML = sorted.map(request => {
+                const applications = applicationsData.filter(app => app.requestRow === request.rowNumber);
+                return renderRequestCard(request, applications);
+            }).join('');
+        }
+
+        function sortRequests(requests, sortBy) {
+            switch(sortBy) {
+                case 'date':
+                    return requests.sort((a, b) => new Date(a.classDate) - new Date(b.classDate));
+                case 'date-desc':
+                    return requests.sort((a, b) => new Date(b.classDate) - new Date(a.classDate));
+                case 'applications':
+                    return requests.sort((a, b) => {
+                        const aApps = applicationsData.filter(app => app.requestRow === a.rowNumber).length;
+                        const bApps = applicationsData.filter(app => app.requestRow === b.rowNumber).length;
+                        return bApps - aApps;
+                    });
+                case 'recent':
+                    return requests.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                default:
+                    return requests;
+            }
+        }
+
+        function renderRequestCard(request, applications) {
+            const requestId = `request-${request.rowNumber}`;
+            const selected = selectedApplications[request.rowNumber];
+
+            return `
+                <div class="request-card" id="${requestId}">
+                    <div class="request-header">
+                        <div class="request-info">
+                            <h2>${request.classDate} at ${request.classTime}</h2>
+                            <div class="request-meta">
+                                <div class="meta-item">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                                    </svg>
+                                    ${request.instructorName}
+                                </div>
+                                <div class="meta-item">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                    </svg>
+                                    ${applications.length} ${applications.length === 1 ? 'Application' : 'Applications'}
+                                </div>
+                            </div>
+                        </div>
+                        <span class="badge pending">Pending</span>
+                    </div>
+
+                    ${request.comments ? `
+                        <div class="request-details">
+                            <p><strong>Comments:</strong> ${request.comments}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="applications-section">
+                        <h3>📋 Applications</h3>
+                        ${applications.length > 0 ? `
+                            <div class="applications-grid">
+                                ${applications.map(app => renderApplicationCard(app, request.rowNumber, selected)).join('')}
+                            </div>
+                            <div class="assign-section">
+                                <div class="selected-info">
+                                    ${selected ? `✓ Selected: ${selected.applicantName}` : 'Select an applicant to assign'}
+                                </div>
+                                <button class="assign-btn" 
+                                        onclick="assignSubstitute(${request.rowNumber})"
+                                        ${!selected ? 'disabled' : ''}>
+                                    Assign Substitute
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="no-applications">
+                                <p>No applications yet. You can manually assign an instructor below.</p>
+                            </div>
+                        `}
+                        
+                        <div class="manual-assign">
+                            <label>Or manually assign an instructor:</label>
+                            <div class="manual-assign-controls">
+                                <select id="manual-${request.rowNumber}">
+                                    <option value="">Select an instructor...</option>
+                                    ${allInstructors.map(i => `<option value="${i.fullname}">${i.displayname}</option>`).join('')}
+                                </select>
+                                <button class="assign-btn" onclick="manualAssign(${request.rowNumber})">
+                                    Assign
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderApplicationCard(application, requestRow, selected) {
+            const isSelected = selected && selected.applicantName === application.applicantName;
+            return `
+                <div class="application-card ${isSelected ? 'selected' : ''}" 
+                     onclick="selectApplication(${requestRow}, '${application.applicantName}')">
+                    <div class="applicant-name">${application.applicantName}</div>
+                    <div class="applicant-email">${application.applicantEmail}</div>
+                    ${application.comments ? `
+                        <div class="application-comments">"${application.comments}"</div>
+                    ` : ''}
+                    <div class="application-time">Applied ${formatTimestamp(application.timestamp)}</div>
+                </div>
+            `;
+        }
+
+        function selectApplication(requestRow, applicantName) {
+            const application = applicationsData.find(app => 
+                app.requestRow === requestRow && app.applicantName === applicantName
+            );
+            
+            selectedApplications[requestRow] = application;
+            renderRequests();
+        }
+
+        async function assignSubstitute(requestRow) {
+            const selected = selectedApplications[requestRow];
+            if (!selected) return;
+
+            if (!confirm(`Assign ${selected.applicantName} to this sub?\n\nThey will receive Slack and email notifications.`)) {
+                return;
+            }
+
+            await performAssignment(requestRow, selected.applicantName);
+        }
+
+        async function manualAssign(requestRow) {
+            const select = document.getElementById(`manual-${requestRow}`);
+            const instructorName = select.value;
+            
+            if (!instructorName) {
+                alert('Please select an instructor');
+                return;
+            }
+
+            if (!confirm(`Assign ${instructorName} to this sub?\n\nThey will receive Slack and email notifications.`)) {
+                return;
+            }
+
+            await performAssignment(requestRow, instructorName);
+        }
+
+        async function performAssignment(requestRow, instructorName) {
+            try {
+                showMessage('Assigning substitute...', 'success');
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'assignSubstitute',
+                        requestRow: requestRow,
+                        instructorName: instructorName
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(`✓ Successfully assigned ${instructorName}! Notifications sent.`, 'success');
+                    
+                    // Remove from selected
+                    delete selectedApplications[requestRow];
+                    
+                    // Reload data after 2 seconds
+                    setTimeout(loadData, 2000);
+                } else {
+                    throw new Error(result.error || 'Assignment failed');
+                }
+            } catch (error) {
+                console.error('Error assigning substitute:', error);
+                showMessage('Error assigning substitute. Please try again.', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+            message.style.display = 'block';
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        // Re-render when sort changes
+        document.getElementById('sortBy').addEventListener('change', renderRequests);
+    </script>
+</body>
+</html>
